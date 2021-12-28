@@ -1,0 +1,19 @@
+query AllNotes {
+  allGetNotes {
+    nodes {
+      noteId
+      noteRevisionId
+      body
+    }
+  }
+}
+
+query AllTags {
+  allTags {
+    nodes {
+      tagId
+      tagName
+    }
+  }
+}
+
