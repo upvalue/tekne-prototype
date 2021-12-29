@@ -5,9 +5,27 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  padding: 2em;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+.ProseMirror {
+  padding: 1em;
+  border: 1px solid black;
+}
+.ProseMirror h1, .ProseMirror h2, .ProseMirror h3, .ProseMirror h4, .ProseMirror h5, .ProseMirror h6 {
+  font-weight: bold;
+}
+
+.container {
+  display: flex;
+  justify-content: space-around;
+}
+
+.entries {
+  width:1200px;
 }

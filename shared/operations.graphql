@@ -3,6 +3,7 @@ query AllNotes {
     nodes {
       noteId
       body
+      createdAt
     }
   }
 }
@@ -16,3 +17,9 @@ query AllTags {
   }
 }
 
+# hi
+mutation UpdateNote($noteId: String!, $body: String!) {
+  updateNotePlus(noteId: $noteId, body: $body) {
+    noteId
+  }
+}

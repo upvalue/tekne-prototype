@@ -1105,6 +1105,7 @@ export type Mutation = {
   updateNoteByNoteId?: Maybe<UpdateNotePayload>;
   /** Updates a single `Note` using a unique key and a patch. */
   updateNoteByTitle?: Maybe<UpdateNotePayload>;
+  updateNotePlus: UpdateNoteReturn;
   /** Updates a single `NoteRevision` using its globally unique id and a patch. */
   updateNoteRevision?: Maybe<UpdateNoteRevisionPayload>;
   /** Updates a single `NoteRevision` using a unique key and a patch. */
@@ -1353,6 +1354,13 @@ export type MutationUpdateNoteByNoteIdArgs = {
 /** The root mutation type which contains root level fields which mutate data. */
 export type MutationUpdateNoteByTitleArgs = {
   input: UpdateNoteByTitleInput;
+};
+
+
+/** The root mutation type which contains root level fields which mutate data. */
+export type MutationUpdateNotePlusArgs = {
+  body: Scalars['String'];
+  noteId: Scalars['String'];
 };
 
 
@@ -2284,6 +2292,11 @@ export type UpdateNotePayloadNoteEdgeArgs = {
   orderBy?: InputMaybe<Array<NotesOrderBy>>;
 };
 
+export type UpdateNoteReturn = {
+  __typename?: 'UpdateNoteReturn';
+  noteId: Scalars['String'];
+};
+
 /** All input for the `updateNoteRevisionByNoteIdAndNoteRevisionId` mutation. */
 export type UpdateNoteRevisionByNoteIdAndNoteRevisionIdInput = {
   /**
@@ -2445,12 +2458,20 @@ export type UpdateTagPayloadTagEdgeArgs = {
 export type AllNotesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type AllNotesQuery = { __typename?: 'Query', allNotes?: { __typename?: 'NotesConnection', nodes: Array<{ __typename?: 'Note', noteId: string, body: any } | null | undefined> } | null | undefined };
+export type AllNotesQuery = { __typename?: 'Query', allNotes?: { __typename?: 'NotesConnection', nodes: Array<{ __typename?: 'Note', noteId: string, body: any, createdAt: any } | null | undefined> } | null | undefined };
 
 export type AllTagsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type AllTagsQuery = { __typename?: 'Query', allTags?: { __typename?: 'TagsConnection', nodes: Array<{ __typename?: 'Tag', tagId: string, tagName: string } | null | undefined> } | null | undefined };
+
+export type UpdateNoteMutationVariables = Exact<{
+  noteId: Scalars['String'];
+  body: Scalars['String'];
+}>;
+
+
+export type UpdateNoteMutation = { __typename?: 'Mutation', updateNotePlus: { __typename?: 'UpdateNoteReturn', noteId: string } };
 
 
 export const AllNotesDocument = gql`
@@ -2459,6 +2480,7 @@ export const AllNotesDocument = gql`
     nodes {
       noteId
       body
+      createdAt
     }
   }
 }
@@ -2480,4 +2502,15 @@ export const AllTagsDocument = gql`
 
 export function useAllTagsQuery(options: Omit<Urql.UseQueryArgs<AllTagsQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<AllTagsQuery>({ query: AllTagsDocument, ...options });
+};
+export const UpdateNoteDocument = gql`
+    mutation UpdateNote($noteId: String!, $body: String!) {
+  updateNotePlus(noteId: $noteId, body: $body) {
+    noteId
+  }
+}
+    `;
+
+export function useUpdateNoteMutation() {
+  return Urql.useMutation<UpdateNoteMutation, UpdateNoteMutationVariables>(UpdateNoteDocument);
 };

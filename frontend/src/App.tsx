@@ -5,26 +5,36 @@ import Highlight from '@tiptap/extension-highlight'
 import Typography from '@tiptap/extension-typography'
 import { createClient, dedupExchange, errorExchange, fetchExchange, Provider as UrqlProvider } from 'urql';
 import { BrowserRouter } from 'react-router-dom'
-import { useAllNotesQuery } from './api/client'
+import { Note, useAllNotesQuery, useUpdateNoteMutation } from './api/client'
+import { Badge, ChakraProvider, HStack } from '@chakra-ui/react'
+import { useTimer } from './hooks/useTimer'
 
-// GraphQL client
-// Load all existing entries
-// Edit a single entry at a time
-// Save entry with a button
+// Add an entry with a button
+// Edit a single entry at a time with auto save
+// Search through entries
+// Tags with autocomplete
 
-const Entry = () => {
+
+const Entry = ({ noteId, body }: { noteId: string, body: string }) => {
   const editor = useEditor({
     extensions: [
       StarterKit,
       Highlight,
       Typography,
     ],
-    content: `
-    <p>
-      basic editor test.
-    </p>
-    `,
-  })
+    content: body,
+  });
+
+  const [updateNoteResult, updateNote] = useUpdateNoteMutation();
+
+  useTimer(noteId, () => {
+    if (editor) {
+      updateNote({
+        noteId,
+        body: JSON.stringify(editor.getJSON()),
+      });
+    }
+  }, [editor]);
 
   return (
     <EditorContent editor={editor} />
@@ -52,22 +62,34 @@ const urqlClient = createClient({
 export const Main = () => {
   const [{ fetching, data }] = useAllNotesQuery();
 
-  if (fetching) {
+  if (fetching || !data) {
     return <>Loading...</>;
   }
-  console.log(data);
-  return (
-    <Entry />
-  )
+
+  return <div className="entries">
+    {data.allNotes?.nodes.map(note => (
+      note && <React.Fragment key={note.noteId}>
+        <HStack>
+          <Badge>{note.noteId}</Badge>
+          <Badge>Created: {note.createdAt}</Badge>
+        </HStack>
+        <Entry key={note.noteId} noteId={note.noteId} body={JSON.parse(note.body)} />
+      </React.Fragment>
+    ))}
+  </div>;
 }
 
 
 export const App = () => {
   return (
     <UrqlProvider value={urqlClient}>
-      <BrowserRouter>
-        <Main />
-      </BrowserRouter>
+      <ChakraProvider>
+        <BrowserRouter>
+          <div className="container">
+            <Main />
+          </div>
+        </BrowserRouter>
+      </ChakraProvider>
     </UrqlProvider>
   )
 }
