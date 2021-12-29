@@ -15,7 +15,8 @@ code {
 
 .ProseMirror {
   padding: 1em;
-  border: 1px solid black;
+  border: 1px solid #cecece;
+  border-radius: 2px;
 }
 .ProseMirror h1, .ProseMirror h2, .ProseMirror h3, .ProseMirror h4, .ProseMirror h5, .ProseMirror h6 {
   font-weight: bold;
