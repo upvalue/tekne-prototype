@@ -378,8 +378,6 @@ export type CreateNotePayload = {
   note?: Maybe<Note>;
   /** An edge for our `Note`. May be used by Relay 1. */
   noteEdge?: Maybe<NotesEdge>;
-  /** Reads a single `NoteRevision` that is related to this `Note`. */
-  noteRevisionByNoteIdAndRevision?: Maybe<NoteRevision>;
   /** Our root query field type. Allows us to run any query from our mutation payload. */
   query?: Maybe<Query>;
 };
@@ -727,8 +725,6 @@ export type DeleteNotePayload = {
   note?: Maybe<Note>;
   /** An edge for our `Note`. May be used by Relay 1. */
   noteEdge?: Maybe<NotesEdge>;
-  /** Reads a single `NoteRevision` that is related to this `Note`. */
-  noteRevisionByNoteIdAndRevision?: Maybe<NoteRevision>;
   /** Our root query field type. Allows us to run any query from our mutation payload. */
   query?: Maybe<Query>;
 };
@@ -885,56 +881,6 @@ export type DeleteTagPayload = {
 export type DeleteTagPayloadTagEdgeArgs = {
   orderBy?: InputMaybe<Array<TagsOrderBy>>;
 };
-
-export type GetNote = {
-  __typename?: 'GetNote';
-  body?: Maybe<Scalars['JSON']>;
-  noteId?: Maybe<Scalars['String']>;
-  noteRevisionId?: Maybe<Scalars['Int']>;
-};
-
-/** A condition to be used against `GetNote` object types. All fields are tested for equality and combined with a logical ‘and.’ */
-export type GetNoteCondition = {
-  /** Checks for equality with the object’s `body` field. */
-  body?: InputMaybe<Scalars['JSON']>;
-  /** Checks for equality with the object’s `noteId` field. */
-  noteId?: InputMaybe<Scalars['String']>;
-  /** Checks for equality with the object’s `noteRevisionId` field. */
-  noteRevisionId?: InputMaybe<Scalars['Int']>;
-};
-
-/** A connection to a list of `GetNote` values. */
-export type GetNotesConnection = {
-  __typename?: 'GetNotesConnection';
-  /** A list of edges which contains the `GetNote` and cursor to aid in pagination. */
-  edges: Array<GetNotesEdge>;
-  /** A list of `GetNote` objects. */
-  nodes: Array<Maybe<GetNote>>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-  /** The count of *all* `GetNote` you could get from the connection. */
-  totalCount: Scalars['Int'];
-};
-
-/** A `GetNote` edge in the connection. */
-export type GetNotesEdge = {
-  __typename?: 'GetNotesEdge';
-  /** A cursor for use in pagination. */
-  cursor?: Maybe<Scalars['Cursor']>;
-  /** The `GetNote` at the end of the edge. */
-  node?: Maybe<GetNote>;
-};
-
-/** Methods to use when ordering `GetNote`. */
-export enum GetNotesOrderBy {
-  BodyAsc = 'BODY_ASC',
-  BodyDesc = 'BODY_DESC',
-  Natural = 'NATURAL',
-  NoteIdAsc = 'NOTE_ID_ASC',
-  NoteIdDesc = 'NOTE_ID_DESC',
-  NoteRevisionIdAsc = 'NOTE_REVISION_ID_ASC',
-  NoteRevisionIdDesc = 'NOTE_REVISION_ID_DESC'
-}
 
 export type KnexMigration = Node & {
   __typename?: 'KnexMigration';
@@ -1461,15 +1407,13 @@ export type Note = Node & {
   __typename?: 'Note';
   /** Reads and enables pagination through a set of `AtNode`. */
   atNodesByNoteId: AtNodesConnection;
+  body: Scalars['JSON'];
   createdAt: Scalars['Datetime'];
   /** A globally unique identifier. Can be used in various places throughout the system to identify this single value. */
   nodeId: Scalars['ID'];
   noteId: Scalars['String'];
-  /** Reads a single `NoteRevision` that is related to this `Note`. */
-  noteRevisionByNoteIdAndRevision?: Maybe<NoteRevision>;
   /** Reads and enables pagination through a set of `NoteRevision`. */
   noteRevisionsByNoteId: NoteRevisionsConnection;
-  revision?: Maybe<Scalars['Int']>;
   title?: Maybe<Scalars['String']>;
   updatedAt: Scalars['Datetime'];
 };
@@ -1498,12 +1442,12 @@ export type NoteNoteRevisionsByNoteIdArgs = {
 
 /** A condition to be used against `Note` object types. All fields are tested for equality and combined with a logical ‘and.’ */
 export type NoteCondition = {
+  /** Checks for equality with the object’s `body` field. */
+  body?: InputMaybe<Scalars['JSON']>;
   /** Checks for equality with the object’s `createdAt` field. */
   createdAt?: InputMaybe<Scalars['Datetime']>;
   /** Checks for equality with the object’s `noteId` field. */
   noteId?: InputMaybe<Scalars['String']>;
-  /** Checks for equality with the object’s `revision` field. */
-  revision?: InputMaybe<Scalars['Int']>;
   /** Checks for equality with the object’s `title` field. */
   title?: InputMaybe<Scalars['String']>;
   /** Checks for equality with the object’s `updatedAt` field. */
@@ -1512,18 +1456,18 @@ export type NoteCondition = {
 
 /** An input for mutations affecting `Note` */
 export type NoteInput = {
+  body: Scalars['JSON'];
   createdAt: Scalars['Datetime'];
   noteId: Scalars['String'];
-  revision?: InputMaybe<Scalars['Int']>;
   title?: InputMaybe<Scalars['String']>;
   updatedAt: Scalars['Datetime'];
 };
 
 /** Represents an update to a `Note`. Fields that are set will be updated. */
 export type NotePatch = {
+  body?: InputMaybe<Scalars['JSON']>;
   createdAt?: InputMaybe<Scalars['Datetime']>;
   noteId?: InputMaybe<Scalars['String']>;
-  revision?: InputMaybe<Scalars['Int']>;
   title?: InputMaybe<Scalars['String']>;
   updatedAt?: InputMaybe<Scalars['Datetime']>;
 };
@@ -1538,19 +1482,6 @@ export type NoteRevision = Node & {
   noteByNoteId?: Maybe<Note>;
   noteId: Scalars['String'];
   noteRevisionId: Scalars['Int'];
-  /** Reads and enables pagination through a set of `Note`. */
-  notesByNoteIdAndRevision: NotesConnection;
-};
-
-
-export type NoteRevisionNotesByNoteIdAndRevisionArgs = {
-  after?: InputMaybe<Scalars['Cursor']>;
-  before?: InputMaybe<Scalars['Cursor']>;
-  condition?: InputMaybe<NoteCondition>;
-  first?: InputMaybe<Scalars['Int']>;
-  last?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<Array<NotesOrderBy>>;
 };
 
 /**
@@ -1645,6 +1576,8 @@ export type NotesEdge = {
 
 /** Methods to use when ordering `Note`. */
 export enum NotesOrderBy {
+  BodyAsc = 'BODY_ASC',
+  BodyDesc = 'BODY_DESC',
   CreatedAtAsc = 'CREATED_AT_ASC',
   CreatedAtDesc = 'CREATED_AT_DESC',
   Natural = 'NATURAL',
@@ -1652,8 +1585,6 @@ export enum NotesOrderBy {
   NoteIdDesc = 'NOTE_ID_DESC',
   PrimaryKeyAsc = 'PRIMARY_KEY_ASC',
   PrimaryKeyDesc = 'PRIMARY_KEY_DESC',
-  RevisionAsc = 'REVISION_ASC',
-  RevisionDesc = 'REVISION_DESC',
   TitleAsc = 'TITLE_ASC',
   TitleDesc = 'TITLE_DESC',
   UpdatedAtAsc = 'UPDATED_AT_ASC',
@@ -1680,8 +1611,6 @@ export type Query = Node & {
   allAtNodes?: Maybe<AtNodesConnection>;
   /** Reads and enables pagination through a set of `At`. */
   allAts?: Maybe<AtsConnection>;
-  /** Reads and enables pagination through a set of `GetNote`. */
-  allGetNotes?: Maybe<GetNotesConnection>;
   /** Reads and enables pagination through a set of `KnexMigration`. */
   allKnexMigrations?: Maybe<KnexMigrationsConnection>;
   /** Reads and enables pagination through a set of `KnexMigrationsLock`. */
@@ -1718,6 +1647,7 @@ export type Query = Node & {
   /** Reads a single `NoteRevision` using its globally unique `ID`. */
   noteRevision?: Maybe<NoteRevision>;
   noteRevisionByNoteIdAndNoteRevisionId?: Maybe<NoteRevision>;
+  ping: Scalars['String'];
   /**
    * Exposes the root query type nested one level down. This is helpful for Relay 1
    * which can only query top level fields if they are in a particular form.
@@ -1754,18 +1684,6 @@ export type QueryAllAtsArgs = {
   last?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<AtsOrderBy>>;
-};
-
-
-/** The root query type which gives access points into the data universe. */
-export type QueryAllGetNotesArgs = {
-  after?: InputMaybe<Scalars['Cursor']>;
-  before?: InputMaybe<Scalars['Cursor']>;
-  condition?: InputMaybe<GetNoteCondition>;
-  first?: InputMaybe<Scalars['Int']>;
-  last?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<Array<GetNotesOrderBy>>;
 };
 
 
@@ -2356,8 +2274,6 @@ export type UpdateNotePayload = {
   note?: Maybe<Note>;
   /** An edge for our `Note`. May be used by Relay 1. */
   noteEdge?: Maybe<NotesEdge>;
-  /** Reads a single `NoteRevision` that is related to this `Note`. */
-  noteRevisionByNoteIdAndRevision?: Maybe<NoteRevision>;
   /** Our root query field type. Allows us to run any query from our mutation payload. */
   query?: Maybe<Query>;
 };
@@ -2529,7 +2445,7 @@ export type UpdateTagPayloadTagEdgeArgs = {
 export type AllNotesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type AllNotesQuery = { __typename?: 'Query', allGetNotes?: { __typename?: 'GetNotesConnection', nodes: Array<{ __typename?: 'GetNote', noteId?: string | null | undefined, noteRevisionId?: number | null | undefined, body?: any | null | undefined } | null | undefined> } | null | undefined };
+export type AllNotesQuery = { __typename?: 'Query', allNotes?: { __typename?: 'NotesConnection', nodes: Array<{ __typename?: 'Note', noteId: string, body: any } | null | undefined> } | null | undefined };
 
 export type AllTagsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -2539,10 +2455,9 @@ export type AllTagsQuery = { __typename?: 'Query', allTags?: { __typename?: 'Tag
 
 export const AllNotesDocument = gql`
     query AllNotes {
-  allGetNotes {
+  allNotes {
     nodes {
       noteId
-      noteRevisionId
       body
     }
   }

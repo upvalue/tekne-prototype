@@ -5,6 +5,7 @@ import Highlight from '@tiptap/extension-highlight'
 import Typography from '@tiptap/extension-typography'
 import { createClient, dedupExchange, errorExchange, fetchExchange, Provider as UrqlProvider } from 'urql';
 import { BrowserRouter } from 'react-router-dom'
+import { useAllNotesQuery } from './api/client'
 
 // GraphQL client
 // Load all existing entries
@@ -33,7 +34,7 @@ const Entry = () => {
 
 const urqlClient = createClient({
   // TODO: Make this build-time configurable
-  url: 'http://localhost:5000/graphql',
+  url: 'http://localhost:3000/graphql',
   requestPolicy: 'network-only',
   // Disable caching
   exchanges: [
@@ -41,21 +42,31 @@ const urqlClient = createClient({
     errorExchange({
       onError: (error, _operation) => {
         console.error(error);
-        // store.dispatch(errorSlice.actions.reportError(error));
       }
     }),
     fetchExchange,
   ]
-})
+});
+
+
+export const Main = () => {
+  const [{ fetching, data }] = useAllNotesQuery();
+
+  if (fetching) {
+    return <>Loading...</>;
+  }
+  console.log(data);
+  return (
+    <Entry />
+  )
+}
+
 
 export const App = () => {
-
-
-
   return (
     <UrqlProvider value={urqlClient}>
       <BrowserRouter>
-        <Entry />
+        <Main />
       </BrowserRouter>
     </UrqlProvider>
   )

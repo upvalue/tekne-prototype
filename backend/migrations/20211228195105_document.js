@@ -7,7 +7,7 @@ exports.up = function (knex) {
     title TEXT,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL,
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL,
-    revision INT,
+    body JSONB NOT NULL,
     UNIQUE(title)
   );
 
@@ -19,8 +19,6 @@ exports.up = function (knex) {
     CONSTRAINT fk_note FOREIGN KEY(note_id) REFERENCES notes(note_id),
     PRIMARY KEY(note_id, note_revision_id)
   );
-
-  ALTER TABLE notes ADD CONSTRAINT fk_note_rev FOREIGN KEY (note_id, revision) REFERENCES note_revisions(note_id, note_revision_id);
 
   CREATE TYPE at_type AS ENUM ('unset', 'yesno', 'timer', 'yesno_timer');
 
@@ -61,20 +59,9 @@ exports.up = function (knex) {
     PRIMARY KEY(note_id, tag_id, path)
   );
 
-  -- Retrieve a specific note at its latest revision
-  CREATE VIEW get_note AS
-    SELECT 
-      n.note_id,
-      nr.body,
-      nr.note_revision_id
-    FROM notes n
-    LEFT JOIN note_revisions nr ON n.note_id = nr.note_id AND n.revision = nr.note_revision_id;
-
   `);
 };
 
 exports.down = function (knex) {
   console.log('document down');
-  // nothings
-  // heck
 };
